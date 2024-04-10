@@ -1,20 +1,18 @@
-# Use the official Node.js image as a parent image
-FROM node:14
+# Use the official Node.js image as the base
+FROM node:18.16.0-alpine3.17
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Set up the application directory
+RUN mkdir -p /opt/app
+WORKDIR /opt/app
 
-# Copy package.json and package-lock.json to the working directory
-COPY package*.json ./
+# Install dependencies
+RUN npm install express
 
-# Install any needed packages specified in package.json
-RUN npm install
+# Write a simple Node.js application
+RUN echo 'const express = require("express"); const app = express(); app.get("/", (req, res) => res.send("Hello World!")); app.listen(3000, () => console.log("App listening on port 3000!"));' > app.js
 
-# Bundle app source inside Docker image
-COPY . .
-
-# Expose port 3000 for the web server
+# Expose the port the app runs on
 EXPOSE 3000
 
-# The command to run when the container starts
+# Define the command to run the application
 CMD [ "node", "app.js" ]
